@@ -4,7 +4,7 @@ pub(super) fn ignore_exists(result: std::result::Result<(), rtnetlink::Error>) -
     match result {
         Ok(()) => Ok(()),
         Err(rtnetlink::Error::NetlinkError(err))
-            if err.code.map(|c| c.get()) == Some(-libc::EEXIST) =>
+            if err.code.map(std::num::NonZero::get) == Some(-libc::EEXIST) =>
         {
             Ok(())
         }
@@ -16,7 +16,7 @@ pub(super) fn ignore_notfound(result: std::result::Result<(), rtnetlink::Error>)
     match result {
         Ok(()) => Ok(()),
         Err(rtnetlink::Error::NetlinkError(err))
-            if err.code.map(|c| c.get()) == Some(-libc::ENOENT) =>
+            if err.code.map(std::num::NonZero::get) == Some(-libc::ENOENT) =>
         {
             Ok(())
         }

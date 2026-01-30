@@ -13,7 +13,7 @@ pub(super) fn resolve_peers(peers: &PeersConfig, paths: &Paths) -> Result<Vec<Pe
             let peer_id = if slug.is_empty() {
                 format!("peer-unnamed-{}", idx + 1)
             } else {
-                format!("peer-{}", slug)
+                format!("peer-{slug}")
             };
             if !seen.insert(peer_id.clone()) {
                 anyhow::bail!("duplicate peer name after slugging: {name}");

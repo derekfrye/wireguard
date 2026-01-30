@@ -54,7 +54,7 @@ pub(super) fn peer_allowed_ips(peer_dir: &Path) -> Result<Vec<String>> {
         return Ok(Vec::new());
     }
     let text = std::fs::read_to_string(&conf_path)
-        .with_context(|| format!("reading {:?}", conf_path))?;
+        .with_context(|| format!("reading {conf_path:?}"))?;
     Ok(extract_addresses(&text))
 }
 

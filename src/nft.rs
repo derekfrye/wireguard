@@ -76,13 +76,9 @@ pub fn teardown(handles: NftHandles) -> Result<()> {
 fn apply_nat_v4(dev: &str, subnet: &Ipv4Net) -> Result<()> {
     run_nft_command_allow_missing(&["delete", "table", "ip", TABLE_V4])?;
     let script = format!(
-        "add table ip {table}\n\
-         add chain ip {table} {chain} {{ type nat hook postrouting priority 100 ; }}\n\
-         add rule ip {table} {chain} oifname \"{dev}\" ip saddr {subnet} masquerade\n",
-        table = TABLE_V4,
-        chain = CHAIN,
-        dev = dev,
-        subnet = subnet
+        "add table ip {TABLE_V4}\n\
+         add chain ip {TABLE_V4} {CHAIN} {{ type nat hook postrouting priority 100 ; }}\n\
+         add rule ip {TABLE_V4} {CHAIN} oifname \"{dev}\" ip saddr {subnet} masquerade\n"
     );
     run_nft_script(&script).context("applying ipv4 nftables nat")?;
     Ok(())
@@ -91,13 +87,9 @@ fn apply_nat_v4(dev: &str, subnet: &Ipv4Net) -> Result<()> {
 fn apply_nat_v6(dev: &str, subnet: &Ipv6Net) -> Result<()> {
     run_nft_command_allow_missing(&["delete", "table", "ip6", TABLE_V6])?;
     let script = format!(
-        "add table ip6 {table}\n\
-         add chain ip6 {table} {chain} {{ type nat hook postrouting priority 100 ; }}\n\
-         add rule ip6 {table} {chain} oifname \"{dev}\" ip6 saddr {subnet} masquerade\n",
-        table = TABLE_V6,
-        chain = CHAIN,
-        dev = dev,
-        subnet = subnet
+        "add table ip6 {TABLE_V6}\n\
+         add chain ip6 {TABLE_V6} {CHAIN} {{ type nat hook postrouting priority 100 ; }}\n\
+         add rule ip6 {TABLE_V6} {CHAIN} oifname \"{dev}\" ip6 saddr {subnet} masquerade\n"
     );
     run_nft_script(&script).context("applying ipv6 nftables nat")?;
     Ok(())
@@ -106,13 +98,10 @@ fn apply_nat_v6(dev: &str, subnet: &Ipv6Net) -> Result<()> {
 fn apply_forward_v4() -> Result<()> {
     run_nft_command_allow_missing(&["delete", "table", "ip", TABLE_FILTER_V4])?;
     let script = format!(
-        "add table ip {table}\n\
-         add chain ip {table} {chain} {{ type filter hook forward priority 0 ; }}\n\
-         add rule ip {table} {chain} iifname \"{iface}\" accept\n\
-         add rule ip {table} {chain} oifname \"{iface}\" accept\n",
-        table = TABLE_FILTER_V4,
-        chain = CHAIN_FWD,
-        iface = WG_IFACE
+        "add table ip {TABLE_FILTER_V4}\n\
+         add chain ip {TABLE_FILTER_V4} {CHAIN_FWD} {{ type filter hook forward priority 0 ; }}\n\
+         add rule ip {TABLE_FILTER_V4} {CHAIN_FWD} iifname \"{WG_IFACE}\" accept\n\
+         add rule ip {TABLE_FILTER_V4} {CHAIN_FWD} oifname \"{WG_IFACE}\" accept\n"
     );
     run_nft_script(&script).context("applying ipv4 nftables forward rules")?;
     Ok(())
@@ -121,13 +110,10 @@ fn apply_forward_v4() -> Result<()> {
 fn apply_forward_v6() -> Result<()> {
     run_nft_command_allow_missing(&["delete", "table", "ip6", TABLE_FILTER_V6])?;
     let script = format!(
-        "add table ip6 {table}\n\
-         add chain ip6 {table} {chain} {{ type filter hook forward priority 0 ; }}\n\
-         add rule ip6 {table} {chain} iifname \"{iface}\" accept\n\
-         add rule ip6 {table} {chain} oifname \"{iface}\" accept\n",
-        table = TABLE_FILTER_V6,
-        chain = CHAIN_FWD,
-        iface = WG_IFACE
+        "add table ip6 {TABLE_FILTER_V6}\n\
+         add chain ip6 {TABLE_FILTER_V6} {CHAIN_FWD} {{ type filter hook forward priority 0 ; }}\n\
+         add rule ip6 {TABLE_FILTER_V6} {CHAIN_FWD} iifname \"{WG_IFACE}\" accept\n\
+         add rule ip6 {TABLE_FILTER_V6} {CHAIN_FWD} oifname \"{WG_IFACE}\" accept\n"
     );
     run_nft_script(&script).context("applying ipv6 nftables forward rules")?;
     Ok(())

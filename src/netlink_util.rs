@@ -25,7 +25,7 @@ pub async fn get_link_by_name(handle: &Handle, name: &str) -> Result<Option<Link
 
 pub fn netlink_err_code(err: &rtnetlink::Error) -> Option<i32> {
     match err {
-        rtnetlink::Error::NetlinkError(netlink) => netlink.code.map(|c| c.get()),
+        rtnetlink::Error::NetlinkError(netlink) => netlink.code.map(std::num::NonZero::get),
         _ => None,
     }
 }

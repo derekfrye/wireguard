@@ -62,7 +62,7 @@ fn load_config_file(path: PathBuf) -> Result<ConfigFile> {
     if !path.exists() {
         return Ok(ConfigFile::default());
     }
-    let text = fs::read_to_string(&path).with_context(|| format!("reading {:?}", path))?;
+    let text = fs::read_to_string(&path).with_context(|| format!("reading {path:?}"))?;
     let cfg: ConfigFile = toml::from_str(&text).context("parsing wg.toml")?;
     Ok(cfg)
 }

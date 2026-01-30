@@ -18,9 +18,9 @@ pub async fn apply(config: &ResolvedConfig) -> Result<WgHandles> {
     let (connection, handle, _) = rtnetlink::new_connection().context("opening netlink")?;
     tokio::spawn(connection);
 
-    eprintln!("wg: creating interface {}", WG_IFACE);
+    eprintln!("wg: creating interface {WG_IFACE}");
     let link_index = link::ensure_wireguard_link(&handle).await?;
-    eprintln!("wg: interface {} index {}", WG_IFACE, link_index);
+    eprintln!("wg: interface {WG_IFACE} index {link_index}");
     eprintln!("wg: assigning interface addresses");
     addresses::configure_addresses(&handle, link_index, config).await?;
     eprintln!("wg: configuring peers");

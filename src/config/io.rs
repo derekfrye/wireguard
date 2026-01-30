@@ -16,10 +16,10 @@ pub(super) fn write_atomic(path: &Path, data: &[u8]) -> Result<()> {
             .truncate(true)
             .write(true)
             .open(&tmp)
-            .with_context(|| format!("writing {:?}", tmp))?;
+            .with_context(|| format!("writing {tmp:?}"))?;
         file.write_all(data).context("writing temp file")?;
     }
-    fs::rename(&tmp, path).with_context(|| format!("renaming {:?} -> {:?}", tmp, path))?;
+    fs::rename(&tmp, path).with_context(|| format!("renaming {tmp:?} -> {path:?}"))?;
     Ok(())
 }
 
