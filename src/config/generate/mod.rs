@@ -11,11 +11,7 @@ mod server_conf;
 pub(super) fn generate_all(cfg: &ConfigFile, peers: &[Peer], paths: &Paths) -> Result<()> {
     let server_keys = keys::ensure_server_keys(paths)?;
 
-    let v4_net: Ipv4Net = cfg
-        .network
-        .subnet_v4
-        .parse()
-        .context("parsing subnet_v4")?;
+    let v4_net: Ipv4Net = cfg.network.subnet_v4.parse().context("parsing subnet_v4")?;
     let v6_net: Option<Ipv6Net> = match cfg.network.subnet_v6.as_deref() {
         Some(value) => Some(value.parse().context("parsing subnet_v6")?),
         None => None,

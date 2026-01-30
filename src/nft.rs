@@ -22,11 +22,7 @@ pub fn apply(config: &ResolvedConfig) -> Result<NftHandles> {
         .allowed_ips
         .iter()
         .any(|ip| ip == "0.0.0.0/0");
-    let enable_v6 = config
-        .network
-        .allowed_ips
-        .iter()
-        .any(|ip| ip == "::/0");
+    let enable_v6 = config.network.allowed_ips.iter().any(|ip| ip == "::/0");
 
     if (enable_v4 || enable_v6) && !nft_available()? {
         anyhow::bail!("nft binary not found but NAT is required by AllowedIPs");
@@ -50,7 +46,9 @@ pub fn apply(config: &ResolvedConfig) -> Result<NftHandles> {
             .as_deref()
             .context("subnet_v6 required for ipv6 NAT")?;
         let dev = default_route_dev(true)?;
-        let subnet: Ipv6Net = subnet_v6.parse().context("parsing subnet_v6 for nftables")?;
+        let subnet: Ipv6Net = subnet_v6
+            .parse()
+            .context("parsing subnet_v6 for nftables")?;
         apply_nat_v6(&dev, &subnet)?;
         apply_forward_v6()?;
     }
@@ -137,9 +135,10 @@ fn parse_dev_from_route(text: &str) -> Result<String> {
         let mut iter = line.split_whitespace();
         while let Some(token) = iter.next() {
             if token == "dev"
-                && let Some(dev) = iter.next() {
-                    return Ok(dev.to_string());
-                }
+                && let Some(dev) = iter.next()
+            {
+                return Ok(dev.to_string());
+            }
         }
     }
     anyhow::bail!("default route device not found")
@@ -156,7 +155,9 @@ fn run_nft_script(script: &str) -> Result<()> {
         .context("spawning nft")?;
     if let Some(stdin) = child.stdin.as_mut() {
         use std::io::Write;
-        stdin.write_all(script.as_bytes()).context("writing nft script")?;
+        stdin
+            .write_all(script.as_bytes())
+            .context("writing nft script")?;
     }
     let output = child.wait_with_output().context("waiting for nft")?;
     if !output.status.success() {

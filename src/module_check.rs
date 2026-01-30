@@ -27,9 +27,7 @@ pub async fn ensure_wireguard_support() -> Result<()> {
                 );
             }
             if code == -libc::EOPNOTSUPP || code == -libc::ENODEV {
-                anyhow::bail!(
-                    "wireguard interface creation failed: kernel module not available"
-                );
+                anyhow::bail!("wireguard interface creation failed: kernel module not available");
             }
         }
         return Err(err).context("creating wireguard interface for module check");

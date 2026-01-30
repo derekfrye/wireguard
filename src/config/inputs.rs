@@ -1,6 +1,6 @@
+use crate::config::Paths;
 use crate::config::io::{read_to_string, write_atomic};
 use crate::config::types::ConfigFile;
-use crate::config::Paths;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -47,7 +47,10 @@ pub(super) fn write_inputs_state(cfg: &ConfigFile, paths: &Paths) -> Result<()> 
     };
     let json = serde_json::to_value(&snapshot).context("serializing inputs")?;
     let digest = hash_json(&json)?;
-    let state = InputsState { digest, inputs: json };
+    let state = InputsState {
+        digest,
+        inputs: json,
+    };
     let text = serde_json::to_string_pretty(&state).context("serializing inputs.json")?;
     write_atomic(&paths.state.join("inputs.json"), text.as_bytes())?;
     Ok(())

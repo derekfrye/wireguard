@@ -1,4 +1,4 @@
-use crate::config::types::{Peer, PeersConfig, Paths};
+use crate::config::types::{Paths, Peer, PeersConfig};
 use anyhow::{Context, Result};
 use std::collections::HashSet;
 use std::fs;

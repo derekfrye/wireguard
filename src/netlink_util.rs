@@ -15,9 +15,10 @@ pub async fn get_link_by_name(handle: &Handle, name: &str) -> Result<Option<Link
         Ok(link) => Ok(link),
         Err(err) => {
             if let Some(code) = netlink_err_code(&err)
-                && (code == -libc::ENODEV || code == -libc::ENOENT) {
-                    return Ok(None);
-                }
+                && (code == -libc::ENODEV || code == -libc::ENOENT)
+            {
+                return Ok(None);
+            }
             Err(err).with_context(|| format!("getting link {name}"))
         }
     }

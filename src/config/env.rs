@@ -23,9 +23,10 @@ pub(super) fn apply_env_overrides(cfg: &mut ConfigFile) {
         cfg.peers.count = Some(count);
     }
     if let Some(names) = env_list("WG_PEER_NAMES")
-        && !names.is_empty() {
-            cfg.peers.names = Some(names);
-        }
+        && !names.is_empty()
+    {
+        cfg.peers.names = Some(names);
+    }
     if let Some(value) = env_bool("WG_ENABLE_COREDNS") {
         cfg.runtime.enable_coredns = value;
     }

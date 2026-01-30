@@ -1,8 +1,8 @@
 mod cli;
 mod config;
 mod dns;
-mod netlink_util;
 mod module_check;
+mod netlink_util;
 mod nft;
 mod runtime;
 mod shutdown;

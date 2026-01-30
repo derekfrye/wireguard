@@ -17,26 +17,30 @@ pub(super) async fn configure_routes(
                 .parse()
                 .with_context(|| format!("parsing allowed ip {allowed}"))?;
             let res = match ipnet {
-                IpNet::V4(v4) => handle
-                    .route()
-                    .add(
-                        RouteMessageBuilder::<std::net::Ipv4Addr>::new()
-                            .output_interface(link_index)
-                            .destination_prefix(v4.addr(), v4.prefix_len())
-                            .build(),
-                    )
-                    .execute()
-                    .await,
-                IpNet::V6(v6) => handle
-                    .route()
-                    .add(
-                        RouteMessageBuilder::<std::net::Ipv6Addr>::new()
-                            .output_interface(link_index)
-                            .destination_prefix(v6.addr(), v6.prefix_len())
-                            .build(),
-                    )
-                    .execute()
-                    .await,
+                IpNet::V4(v4) => {
+                    handle
+                        .route()
+                        .add(
+                            RouteMessageBuilder::<std::net::Ipv4Addr>::new()
+                                .output_interface(link_index)
+                                .destination_prefix(v4.addr(), v4.prefix_len())
+                                .build(),
+                        )
+                        .execute()
+                        .await
+                }
+                IpNet::V6(v6) => {
+                    handle
+                        .route()
+                        .add(
+                            RouteMessageBuilder::<std::net::Ipv6Addr>::new()
+                                .output_interface(link_index)
+                                .destination_prefix(v6.addr(), v6.prefix_len())
+                                .build(),
+                        )
+                        .execute()
+                        .await
+                }
             };
             ignore_exists(res).with_context(|| format!("adding route {allowed}"))?;
         }

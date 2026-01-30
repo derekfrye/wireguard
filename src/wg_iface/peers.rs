@@ -64,7 +64,10 @@ pub(super) fn best_effort_wg_cleanup(config: &ResolvedConfig) {
         let public_key = match read_to_string(peer_dir.join("public.key")) {
             Ok(key) => key,
             Err(err) => {
-                eprintln!("wg cleanup: unable to read public key for {}: {err}", peer.id);
+                eprintln!(
+                    "wg cleanup: unable to read public key for {}: {err}",
+                    peer.id
+                );
                 continue;
             }
         };

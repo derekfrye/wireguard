@@ -12,8 +12,8 @@ mod qr;
 mod types;
 
 pub use types::{
-    ConfigFile, NetworkConfig, Paths, PeersConfig, ResolvedConfig, RuntimeConfig, RuntimeConfigFile,
-    ServerConfig,
+    ConfigFile, NetworkConfig, Paths, PeersConfig, ResolvedConfig, RuntimeConfig,
+    RuntimeConfigFile, ServerConfig,
 };
 
 pub fn prepare() -> Result<ResolvedConfig> {
@@ -35,7 +35,8 @@ pub fn prepare() -> Result<ResolvedConfig> {
         enable_coredns: cfg.runtime.enable_coredns,
     };
 
-    let regen_needed = inputs::inputs_changed(&cfg, &paths)? || assets::assets_missing(&paths, &peers);
+    let regen_needed =
+        inputs::inputs_changed(&cfg, &paths)? || assets::assets_missing(&paths, &peers);
     if regen_needed {
         generate::generate_all(&cfg, &peers, &paths)?;
         inputs::write_inputs_state(&cfg, &paths)?;
@@ -52,9 +53,10 @@ pub fn prepare() -> Result<ResolvedConfig> {
 
 fn config_path() -> PathBuf {
     if let Ok(path) = std::env::var("WG_CONFIG")
-        && !path.trim().is_empty() {
-            return PathBuf::from(path);
-        }
+        && !path.trim().is_empty()
+    {
+        return PathBuf::from(path);
+    }
     PathBuf::from("/etc/wg/wg.toml")
 }
 
@@ -62,8 +64,7 @@ fn load_config_file(path: &Path) -> Result<ConfigFile> {
     if !path.exists() {
         return Ok(ConfigFile::default());
     }
-    let text = fs::read_to_string(path)
-        .with_context(|| format!("reading {}", path.display()))?;
+    let text = fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
     let cfg: ConfigFile = toml::from_str(&text).context("parsing wg.toml")?;
     Ok(cfg)
 }
