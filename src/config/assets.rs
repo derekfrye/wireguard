@@ -2,24 +2,24 @@ use crate::config::types::{Paths, Peer};
 use anyhow::{Context, Result};
 use std::fs;
 
-pub(super) fn assets_missing(paths: &Paths, peers: &[Peer]) -> Result<bool> {
+pub(super) fn assets_missing(paths: &Paths, peers: &[Peer]) -> bool {
     if !paths.keys.join("server.key").exists() || !paths.keys.join("server.pub").exists() {
-        return Ok(true);
+        return true;
     }
     for peer in peers {
         let peer_dir = paths.peers.join(&peer.id);
         if !peer_dir.exists() {
-            return Ok(true);
+            return true;
         }
         let private_key = peer_dir.join("private.key");
         let public_key = peer_dir.join("public.key");
         let psk = peer_dir.join("preshared.key");
         let client_conf = peer_dir.join("client.conf");
         if !private_key.exists() || !public_key.exists() || !psk.exists() || !client_conf.exists() {
-            return Ok(true);
+            return true;
         }
     }
-    Ok(false)
+    false
 }
 
 pub(super) fn ensure_dirs(paths: &Paths) -> Result<()> {

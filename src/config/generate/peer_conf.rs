@@ -2,6 +2,7 @@ use crate::config::io::write_atomic;
 use crate::config::qr::{print_qr, write_qr_png};
 use crate::config::types::{ConfigFile, Paths, Peer};
 use anyhow::{Context, Result};
+use std::fmt::Write;
 use std::fs;
 
 pub(super) fn generate_peer(
@@ -23,10 +24,10 @@ pub(super) fn generate_peer(
     if let Some(v6) = ip6 {
         addresses.push(format!("{v6}/128"));
     }
-    text.push_str(&format!("Address = {}\n", addresses.join(", ")));
-    text.push_str(&format!("PrivateKey = {}\n", keys.private.trim()));
+    writeln!(text, "Address = {}", addresses.join(", "))?;
+    writeln!(text, "PrivateKey = {}", keys.private.trim())?;
     if !cfg.network.peer_dns.is_empty() {
-        text.push_str(&format!("DNS = {}\n", cfg.network.peer_dns.join(", ")));
+        writeln!(text, "DNS = {}", cfg.network.peer_dns.join(", "))?;
     }
     text.push('\n');
 
@@ -36,15 +37,9 @@ pub(super) fn generate_peer(
         .as_ref()
         .context("external_address must be set to generate peer configs")?;
     text.push_str("[Peer]\n");
-    text.push_str(&format!("PublicKey = {}\n", server_public.trim()));
-    text.push_str(&format!(
-        "Endpoint = {}:{}\n",
-        external, cfg.server.listen_port
-    ));
-    text.push_str(&format!(
-        "AllowedIPs = {}\n",
-        cfg.network.allowed_ips.join(", ")
-    ));
+    writeln!(text, "PublicKey = {}", server_public.trim())?;
+    writeln!(text, "Endpoint = {}:{}", external, cfg.server.listen_port)?;
+    writeln!(text, "AllowedIPs = {}", cfg.network.allowed_ips.join(", "))?;
 
     write_atomic(&peer_dir.join("client.conf"), text.as_bytes())?;
 

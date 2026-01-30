@@ -12,20 +12,19 @@ pub async fn run() -> Result<()> {
     shutdown::wait_for_signal().await?;
 
     if let Some(child) = coredns {
-        dns::stop(child)?;
+        dns::stop(child);
     }
-    nft::teardown(nft_handles)?;
+    nft::teardown(&nft_handles)?;
     wg_iface::teardown(&resolved, wg_handle).await?;
 
     Ok(())
 }
 
-pub async fn show_peer(_peers: Vec<String>) -> Result<()> {
+pub fn show_peer(_peers: Vec<String>) {
     // TODO: implement peer QR output and config lookup.
-    Ok(())
 }
 
-pub async fn generate() -> Result<()> {
+pub fn generate() -> Result<()> {
     let _ = config::prepare()?;
     Ok(())
 }

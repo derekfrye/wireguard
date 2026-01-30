@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 mod assets;
 mod env;
@@ -17,8 +17,8 @@ pub use types::{
 };
 
 pub fn prepare() -> Result<ResolvedConfig> {
-    let mut cfg = load_config_file(config_path()?)?;
-    env::apply_env_overrides(&mut cfg)?;
+    let mut cfg = load_config_file(&config_path())?;
+    env::apply_env_overrides(&mut cfg);
 
     let paths = Paths {
         root: PathBuf::from("/var/lib/wg"),
@@ -35,7 +35,7 @@ pub fn prepare() -> Result<ResolvedConfig> {
         enable_coredns: cfg.runtime.enable_coredns,
     };
 
-    let regen_needed = inputs::inputs_changed(&cfg, &paths)? || assets::assets_missing(&paths, &peers)?;
+    let regen_needed = inputs::inputs_changed(&cfg, &paths)? || assets::assets_missing(&paths, &peers);
     if regen_needed {
         generate::generate_all(&cfg, &peers, &paths)?;
         inputs::write_inputs_state(&cfg, &paths)?;
@@ -50,19 +50,20 @@ pub fn prepare() -> Result<ResolvedConfig> {
     })
 }
 
-fn config_path() -> Result<PathBuf> {
+fn config_path() -> PathBuf {
     if let Ok(path) = std::env::var("WG_CONFIG")
         && !path.trim().is_empty() {
-            return Ok(PathBuf::from(path));
+            return PathBuf::from(path);
         }
-    Ok(PathBuf::from("/etc/wg/wg.toml"))
+    PathBuf::from("/etc/wg/wg.toml")
 }
 
-fn load_config_file(path: PathBuf) -> Result<ConfigFile> {
+fn load_config_file(path: &Path) -> Result<ConfigFile> {
     if !path.exists() {
         return Ok(ConfigFile::default());
     }
-    let text = fs::read_to_string(&path).with_context(|| format!("reading {path:?}"))?;
+    let text = fs::read_to_string(path)
+        .with_context(|| format!("reading {}", path.display()))?;
     let cfg: ConfigFile = toml::from_str(&text).context("parsing wg.toml")?;
     Ok(cfg)
 }

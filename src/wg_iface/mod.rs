@@ -37,7 +37,7 @@ pub async fn teardown(config: &ResolvedConfig, handle: WgHandles) -> Result<()> 
     let (connection, netlink, _) = rtnetlink::new_connection().context("opening netlink")?;
     tokio::spawn(connection);
 
-    peers::best_effort_wg_cleanup(config)?;
+    peers::best_effort_wg_cleanup(config);
     routes::delete_routes(&netlink, handle.link_index, config).await?;
     let res = netlink.link().del(handle.link_index).execute().await;
     util::ignore_notfound(res).context("deleting wg link")?;

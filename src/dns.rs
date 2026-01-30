@@ -11,9 +11,8 @@ pub fn maybe_start(use_coredns: bool) -> Result<Option<Child>> {
     Ok(Some(child))
 }
 
-pub fn stop(mut child: Child) -> Result<()> {
+pub fn stop(mut child: Child) {
     // TODO: send a graceful signal and wait with timeout.
     let _ = child.kill();
     let _ = child.wait();
-    Ok(())
 }

@@ -16,7 +16,10 @@ async fn main() -> anyhow::Result<()> {
 
     match cli.command {
         cli::Commands::Run => runtime::run().await,
-        cli::Commands::ShowPeer { peers } => runtime::show_peer(peers).await,
-        cli::Commands::Generate => runtime::generate().await,
+        cli::Commands::ShowPeer { peers } => {
+            runtime::show_peer(peers);
+            Ok(())
+        }
+        cli::Commands::Generate => runtime::generate(),
     }
 }

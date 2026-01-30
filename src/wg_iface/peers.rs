@@ -54,11 +54,11 @@ pub(super) fn peer_allowed_ips(peer_dir: &Path) -> Result<Vec<String>> {
         return Ok(Vec::new());
     }
     let text = std::fs::read_to_string(&conf_path)
-        .with_context(|| format!("reading {conf_path:?}"))?;
+        .with_context(|| format!("reading {}", conf_path.display()))?;
     Ok(extract_addresses(&text))
 }
 
-pub(super) fn best_effort_wg_cleanup(config: &ResolvedConfig) -> Result<()> {
+pub(super) fn best_effort_wg_cleanup(config: &ResolvedConfig) {
     for peer in &config.peers {
         let peer_dir = config.paths.peers.join(&peer.id);
         let public_key = match read_to_string(peer_dir.join("public.key")) {
@@ -89,8 +89,6 @@ pub(super) fn best_effort_wg_cleanup(config: &ResolvedConfig) -> Result<()> {
     if let Err(err) = run_wg_command(&args) {
         eprintln!("wg cleanup: failed to reset listen port: {err}");
     }
-
-    Ok(())
 }
 
 fn extract_addresses(text: &str) -> Vec<String> {
@@ -123,5 +121,5 @@ fn run_wg_command(args: &[String]) -> Result<()> {
 
 fn read_to_string<P: AsRef<Path>>(path: P) -> Result<String> {
     std::fs::read_to_string(path.as_ref())
-        .with_context(|| format!("reading {:?}", path.as_ref()))
+        .with_context(|| format!("reading {}", path.as_ref().display()))
 }

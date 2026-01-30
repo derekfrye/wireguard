@@ -1,7 +1,6 @@
 use crate::config::types::ConfigFile;
-use anyhow::Result;
 
-pub(super) fn apply_env_overrides(cfg: &mut ConfigFile) -> Result<()> {
+pub(super) fn apply_env_overrides(cfg: &mut ConfigFile) {
     if let Some(port) = env_u16("WG_LISTEN_PORT") {
         cfg.server.listen_port = port;
     }
@@ -33,7 +32,6 @@ pub(super) fn apply_env_overrides(cfg: &mut ConfigFile) -> Result<()> {
     if let Some(value) = env_bool("WG_EMIT_QR") {
         cfg.runtime.emit_qr = value;
     }
-    Ok(())
 }
 
 fn env_string(key: &str) -> Option<String> {

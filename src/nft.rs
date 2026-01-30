@@ -39,7 +39,7 @@ pub fn apply(config: &ResolvedConfig) -> Result<NftHandles> {
             .subnet_v4
             .parse()
             .context("parsing subnet_v4 for nftables")?;
-        apply_nat_v4(&dev, &subnet)?;
+        apply_nat_v4(&dev, subnet)?;
         apply_forward_v4()?;
     }
 
@@ -61,7 +61,7 @@ pub fn apply(config: &ResolvedConfig) -> Result<NftHandles> {
     })
 }
 
-pub fn teardown(handles: NftHandles) -> Result<()> {
+pub fn teardown(handles: &NftHandles) -> Result<()> {
     if handles.v4 {
         run_nft_command_allow_missing(&["delete", "table", "ip", TABLE_V4])?;
         run_nft_command_allow_missing(&["delete", "table", "ip", TABLE_FILTER_V4])?;
@@ -73,7 +73,7 @@ pub fn teardown(handles: NftHandles) -> Result<()> {
     Ok(())
 }
 
-fn apply_nat_v4(dev: &str, subnet: &Ipv4Net) -> Result<()> {
+fn apply_nat_v4(dev: &str, subnet: Ipv4Net) -> Result<()> {
     run_nft_command_allow_missing(&["delete", "table", "ip", TABLE_V4])?;
     let script = format!(
         "add table ip {TABLE_V4}\n\
