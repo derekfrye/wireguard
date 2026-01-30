@@ -1,0 +1,9 @@
+Cargo.lock
+.env
+target
+**/target/
+tests/tests/**/debug*/
+tests/tests/**/debug*/**
+node_modules/
+dist/
+examples/m-helper_x.container

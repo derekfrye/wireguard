@@ -1,0 +1,32 @@
+[Unit]
+Description=WireGuard VPN Server (dev)
+After=local-fs.target wg_helper.service
+
+[Container]
+Image=localhost/djf/rust-wg
+ContainerName=rust-wg-dev
+AddCapability=NET_ADMIN NET_RAW
+Environment=TZ=America/Chicago
+Environment=WG_LISTEN_PORT=51820
+Environment=WG_EXTERNAL_ADDRESS=<FILL IN YOUR PUBLIC IP>
+Environment=WG_PEER_COUNT=3
+# replace if you your dns server is another IP
+Environment=WG_PEER_DNS=10.3.0.100
+# set to whatever subnet you want to use
+Environment=WG_SUBNET_V4=10.66.0.0/24
+# set to whatever subnet you want to use
+Environment=WG_SUBNET_V6=fd7a:115c:a1e0:ab12::/64
+Environment=WG_ALLOWED_IPS=0.0.0.0/0,::/0
+Environment=WG_ENABLE_COREDNS=false
+Volume=rust_wg_dev:/var/lib/wg
+Volume=/lib/modules:/lib/modules:ro
+PublishPort=51821:51820/udp
+PublishPort=51821:51820/tcp
+Network=wireguard-dev:ip=10.7.0.3
+# replace if you your dns server is on another network
+Network=wirehole-squid:ip=10.3.0.6
+# replace if you your dns server is another IP
+DNS=10.3.0.100
+Sysctl=net.ipv4.conf.all.src_valid_mark=1
+Sysctl=net.ipv4.conf.all.forwarding=1
+Sysctl=net.ipv6.conf.all.forwarding=1

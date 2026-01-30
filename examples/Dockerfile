@@ -1,0 +1,32 @@
+FROM fedora:43 AS builder
+
+RUN dnf -y update \
+    && dnf -y install \
+        cargo \
+        gcc \
+        rust \
+    && dnf -y clean all
+
+WORKDIR /build
+COPY rust-wg/ /build/rust-wg/
+WORKDIR /build/rust-wg
+RUN cargo build --release
+
+FROM fedora:43
+
+RUN dnf -y update \
+    && dnf -y install \
+        ca-certificates \
+        coredns \
+        iproute \
+        iputils \
+        kmod \
+        libcap \
+        nftables \
+        qrencode \
+        wireguard-tools \
+    && dnf -y clean all
+
+COPY --from=builder /build/rust-wg/target/release/rust-wg /usr/local/bin/rust-wg
+
+ENTRYPOINT ["/usr/local/bin/rust-wg", "run"]
