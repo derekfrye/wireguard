@@ -150,11 +150,10 @@ fn parse_dev_from_route(text: &str) -> Result<String> {
     for line in text.lines() {
         let mut iter = line.split_whitespace();
         while let Some(token) = iter.next() {
-            if token == "dev" {
-                if let Some(dev) = iter.next() {
+            if token == "dev"
+                && let Some(dev) = iter.next() {
                     return Ok(dev.to_string());
                 }
-            }
         }
     }
     anyhow::bail!("default route device not found")

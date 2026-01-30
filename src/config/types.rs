@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Default)]
 pub struct ConfigFile {
     #[serde(default)]
     pub server: ServerConfig,
@@ -13,16 +14,6 @@ pub struct ConfigFile {
     pub runtime: RuntimeConfigFile,
 }
 
-impl Default for ConfigFile {
-    fn default() -> Self {
-        Self {
-            server: ServerConfig::default(),
-            network: NetworkConfig::default(),
-            peers: PeersConfig::default(),
-            runtime: RuntimeConfigFile::default(),
-        }
-    }
-}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ServerConfig {
@@ -59,19 +50,12 @@ impl Default for NetworkConfig {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Default)]
 pub struct PeersConfig {
     pub count: Option<usize>,
     pub names: Option<Vec<String>>,
 }
 
-impl Default for PeersConfig {
-    fn default() -> Self {
-        Self {
-            count: None,
-            names: None,
-        }
-    }
-}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RuntimeConfigFile {

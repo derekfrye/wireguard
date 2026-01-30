@@ -51,11 +51,10 @@ pub fn prepare() -> Result<ResolvedConfig> {
 }
 
 fn config_path() -> Result<PathBuf> {
-    if let Ok(path) = std::env::var("WG_CONFIG") {
-        if !path.trim().is_empty() {
+    if let Ok(path) = std::env::var("WG_CONFIG")
+        && !path.trim().is_empty() {
             return Ok(PathBuf::from(path));
         }
-    }
     Ok(PathBuf::from("/etc/wg/wg.toml"))
 }
 
