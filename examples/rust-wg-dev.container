@@ -3,30 +3,59 @@ Description=WireGuard VPN Server (dev)
 After=local-fs.target wg_helper.service
 
 [Container]
+# name this whatever you want, just make sure `podman build --tag` matches
 Image=localhost/djf/rust-wg
+# name this whatever you want, or accept the default name
 ContainerName=rust-wg-dev
+# Necessary to setup WireGuard interfaces & routes & nftables
 AddCapability=NET_ADMIN NET_RAW
-Environment=TZ=America/Chicago
-Environment=WG_LISTEN_PORT=51820
-Environment=WG_EXTERNAL_ADDRESS=<FILL IN YOUR PUBLIC IP>
-Environment=WG_PEER_COUNT=3
-# replace if you your dns server is another IP
-Environment=WG_PEER_DNS=10.3.0.100
-# set to whatever subnet you want to use
-Environment=WG_SUBNET_V4=10.66.0.0/24
-# set to whatever subnet you want to use
-Environment=WG_SUBNET_V6=fd7a:115c:a1e0:ab12::/64
-Environment=WG_ALLOWED_IPS=0.0.0.0/0,::/0
-Environment=WG_ENABLE_COREDNS=false
-Volume=rust_wg_dev:/var/lib/wg
-Volume=/lib/modules:/lib/modules:ro
-PublishPort=51821:51820/udp
-PublishPort=51821:51820/tcp
-Network=wireguard-dev:ip=10.7.0.3
-# replace if you your dns server is on another network
-Network=wirehole-squid:ip=10.3.0.6
-# replace if you your dns server is another IP
+# replace with your specific DNS server IP
 DNS=10.3.0.100
+
+# this is the port your peers will try to connect on
+Environment=WG_LISTEN_PORT=51820
+# this can be your public IP (if its internet reachable), or you can use an internal IP (e.g., 192.168.x.x, whatever your container's host or pod's IP is)
+Environment=WG_EXTERNAL_ADDRESS=<FILL IN YOUR IP>
+# number of peers to support/create configs for
+Environment=WG_PEER_COUNT=3
+# replace if you want peers to use a different dns server IP, accepts csv
+Environment=WG_PEER_DNS=10.3.0.100
+# set to whatever IPv4 subnet you want the VPN to use
+Environment=WG_SUBNET_V4=10.66.0.0/24
+# set to whatever IPv6 subnet you want the VPN to use
+Environment=WG_SUBNET_V6=fd7a:115c:a1e0:ab12::/64
+# set to whatever endpoint you want the peers to use (e.g., your public IP or domain name)
+Environment=WG_ALLOWED_IPS=0.0.0.0/0,::/0
+
+# set to true to enable CoreDNS within the container, otherwise leave off
+# You’d enable CoreDNS in the container when you want the VPN server to provide DNS to peers instead of relying on an external resolver. Typical cases:
+#  - You want a stable, local DNS IP for clients (then also set set WG_PEER_DNS to the container’s DNS IP).
+#  - You need split‑horizon or internal name resolution for services on the VPN.
+#  - You want to centralize DNS filtering/logging inside the VPN.
+#  -  If you already have a reachable DNS server elsewhere, or you don’t want to run DNS in the container, leave it off.
+Environment=WG_ENABLE_COREDNS=false
+
+# persist wg keys and configs across container restarts
+Volume=rust_wg_dev:/var/lib/wg
+# necessary to load WireGuard kernel module from host
+Volume=/lib/modules:/lib/modules:ro
+
+# expose the WireGuard ports on the host
+PublishPort=51820:51820/udp
+# tcp probably not necessary
+# PublishPort=51820:51820/tcp
+
+# replace if you your dns server is on another network
+# this example created this way, and a dns serving container is at 10.3.0.100
+# `podman network create --driver bridge --subnet=10.3.0.0/16 --ipv6 --subnet fd00::/64 --disable-dns wirehole-squid`
+Network=wirehole-squid:ip=10.3.0.6
+
+# required for policy routing with WireGuard’s fwmark (avoids rp_filter issues)
 Sysctl=net.ipv4.conf.all.src_valid_mark=1
+# enable forwarding so the container can route peer traffic
 Sysctl=net.ipv4.conf.all.forwarding=1
+# enable forwarding so the container can route peer traffic
 Sysctl=net.ipv6.conf.all.forwarding=1
+
+# Not strictly necessary
+Environment=TZ=America/Chicago
