@@ -1,6 +1,8 @@
 # Rootless podman WireGuard VPN
 
-This is project sets up WireGuard tunnels within a rootless podman container. Use case: a WireGuard container so your other devices (phone, other computers, etc.) can VPN into your environment. Runs with only the permissions necessary[^1]. Inspired by [linuxserver/wireguard](https://github.com/linuxserver/docker-wireguard), but using `nft` (instead of `iptables`) and programmed in rust rather than shell & `wg-quick` scripts.
+This is project sets up WireGuard tunnels within a rootless podman container. Use case: a WireGuard container for your other devices (phone, other computers, etc.) to VPN into your environment. Runs with only the permissions necessary[^1].
+
+Inspired by [linuxserver/wireguard](https://github.com/linuxserver/docker-wireguard), but using `nft` (instead of `iptables`) and programmed in rust rather than shell & `wg-quick` scripts.
 
 ## Quickstart
 
