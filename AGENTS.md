@@ -4,13 +4,13 @@
 - `rust-wg/` is the Rust workspace; application code lives in `rust-wg/src/`.
 - `docs/` contains the clean-room spec and operational notes (e.g., `docs/wg_spec.md`, `docs/test_plan.md`).
 - `examples/` holds helper assets such as the dev-container unit (`examples/rust-wg-dev.container`).
-- `examples/Dockerfile` builds the container image used by the dev plan.
+- `examples/Dockerfile.wireguard` builds the container image used by the dev plan.
 
 ## Build, Test, and Development Commands
 - `cargo build` (run from `rust-wg/`): compile the runtime binary.
 - `cargo run -- run` (from `rust-wg/`): start the runtime using default config discovery.
 - `cargo run -- generate` (from `rust-wg/`): generate configs without starting the runtime.
-- `podman build -t localhost/djf/rust-wg -f examples/Dockerfile .`: build the dev container image (see `docs/test_plan.md`).
+- `podman build -t localhost/djf/rust-wg -f examples/Dockerfile.wireguard .`: build the dev container image (see `docs/test_plan.md`).
 - `systemctl --user start rust-wg-dev.container`: start the dev container unit.
 
 ## Coding Style & Naming Conventions

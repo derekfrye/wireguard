@@ -1,65 +1,40 @@
 # WireGuard Test Plan (dev container)
 
 This plan validates the current `rust-wg` runtime in a Podman container.
-Note: peer config generation requires `WG_EXTERNAL_ADDRESS` (or `external_address` in `wg.toml`).
+Note: peer config generation requires `WG_EXTERNAL_ADDRESS` (or `external_address` in `wg.toml`). The example quadlet sets `WG_EXTERNAL_ADDRESS` for you; set it manually if you don't use the quadlet.
 
-## 1) Build + start
+## 1) Build + start the WireGuard container
 
 ```sh
-podman build -t localhost/djf/rust-wg -f examples/Dockerfile .
+podman build -t localhost/djf/rust-wg -f examples/Dockerfile.wireguard .
 systemctl --user daemon-reload
 systemctl --user start rust-wg-dev.container
 ```
 
-## 2) Locate generated peer config
 
-Peer configs are stored in the named volume `rust_wg_dev` at `/var/lib/wg/peers/<peer-id>/client.conf`.
+## 2) Test from a peer container
 
-Option A: inspect from the container
-
-```sh
-podman exec -it rust-wg-dev ls /var/lib/wg/peers
-podman exec -it rust-wg-dev cat /var/lib/wg/peers/<peer-id>/client.conf
-```
-
-Option B: inspect from the host
+Build and start a peer test container (joins the same network as the WireGuard container):
 
 ```sh
-podman volume inspect rust_wg_dev
+podman build -t localhost/djf/rust-wg-test-peer -f examples/Dockerfile.test_peer .
+cp examples/test_peer.container ~/.config/containers/systemd/
+systemctl --user daemon-reload
+systemctl --user start test_peer.container
 ```
 
-Then open `<Mountpoint>/peers/<peer-id>/client.conf`.
-
-## 3) Sanity checks inside the container
+Then run the host-side helper to bring up the WireGuard tunnel inside the peer container and curl a URL that is reachable over the tunnel:
 
 ```sh
-podman exec -it rust-wg-dev wg show
-podman exec -it rust-wg-dev ip link show wg0
-podman exec -it rust-wg-dev ip addr show wg0
+WG_TEST_URL=http://10.66.0.1:8080/ examples/setup_wg_and_run_curl_in_peer.sh
 ```
 
-## 4) Test from the host
+If the curl succeeds, the integration path is working. You can override `WG_ALLOWED_IPS`,
+`WG_PING_TARGET`, or `PEER_ID` in the script environment as needed. Set `WG_ENDPOINT` only
+if your network disables container DNS.
 
-Copy a `client.conf` to a temp file and adjust two fields for a safe test:
 
-- **Endpoint**: for local testing, set to `127.0.0.1:51821` (or your host LAN IP + 51821).
-- **AllowedIPs**: change to `10.66.0.0/24` to avoid routing all traffic.
-
-Then bring it up and verify:
-
-```sh
-sudo wg-quick up /path/to/client.conf
-ping 10.66.0.1
-sudo wg show
-```
-
-If you see a handshake and the ping succeeds, the tunnel is working.
-
-## 5) Firewall / port check
-
-Ensure the host allows UDP `51821`. If the handshake never appears, this is the most common blocker.
-
-## 6) Logs / troubleshooting
+## Logs / troubleshooting
 
 ```sh
 journalctl --user -u rust-wg-dev.container

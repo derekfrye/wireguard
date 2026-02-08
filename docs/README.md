@@ -6,7 +6,7 @@ Inspired by [linuxserver/wireguard](https://github.com/linuxserver/docker-wiregu
 
 ## Quickstart
 
-1. Build the image as a non-root user `podman build --tag localhost/djf/rust-wg -f examples/Dockerfile`
+1. Build the image as a non-root user `podman build --tag localhost/djf/rust-wg -f examples/Dockerfile.wireguard`
     a. If you pick a different tag name, adjust the tag name in the next step.
 2. Start from the [example systemd quadlet](/examples/rust-wg-dev.container). Configure the variables within; the file is documented.
 3. Start the container:
@@ -39,7 +39,7 @@ At a high level, the crate (which you could run outside of a container if you wa
 
 See [design spec](/docs/wg_spec.md) for more.
 
-### Dockerfile
+### Dockerfile.wireguard
 
 Builds a Fedora-based image with `rust-wg` and required tools. The entrypoint is
 `rust-wg run`.
@@ -47,7 +47,7 @@ Builds a Fedora-based image with `rust-wg` and required tools. The entrypoint is
 Build:
 
 ```sh
-podman build -t localhost/djf/rust-wg -f examples/Dockerfile .
+podman build -t localhost/djf/rust-wg -f examples/Dockerfile.wireguard .
 ```
 
 ### Quadlet
@@ -100,6 +100,15 @@ To clean up:
 
 ```sh
 sudo examples/debug_full_tunnel_client_run_as_root.sh cleanup
+```
+
+### examples/setup_wg_and_run_curl_in_peer.sh
+
+Host-side helper that uses a peer test container. It copies a generated peer config from the
+WireGuard container, brings up a tunnel inside the peer container, then runs a curl request.
+
+```sh
+WG_TEST_URL=http://10.66.0.1:8080/ examples/setup_wg_and_run_curl_in_peer.sh
 ```
 
 ### Test plan

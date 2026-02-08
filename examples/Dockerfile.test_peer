@@ -1,0 +1,12 @@
+FROM fedora:43
+
+RUN dnf -y install \
+        curl \
+        iproute \
+        iputils \
+        sed \
+        wireguard-tools \
+    && dnf -y clean all \
+    && rm -rf /var/cache/dnf
+
+CMD ["/usr/bin/sleep", "infinity"]

@@ -1,0 +1,17 @@
+[Unit]
+Description=WireGuard test peer (dev)
+After=local-fs.target
+
+[Container]
+Image=localhost/djf/rust-wg-test-peer
+ContainerName=rust-wg-test-peer
+AddCapability=NET_ADMIN NET_RAW
+
+# Mount the WireGuard runtime data from the server container.
+Volume=rust_wg_dev:/var/lib/wg:ro
+
+# Join the same network as the WireGuard container.
+# Update the network name or IP to match your rust-wg-dev.container settings.
+Network=wirehole-squid:ip=10.3.0.7
+
+Environment=TZ=America/Chicago
