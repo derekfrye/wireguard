@@ -23,6 +23,16 @@ if [[ -z "$WG_TEST_URL" ]]; then
     WG_TEST_URL="http://${WG_PING_TARGET}/"
 fi
 
+if [[ -z "$WG_ENDPOINT" || "$WG_ENDPOINT" != *:* || "$WG_ENDPOINT" == :* || "$WG_ENDPOINT" == *: ]]; then
+    echo "WG_ENDPOINT is empty or invalid (expected host:port). Set WG_ENDPOINT explicitly." >&2
+    exit 1
+fi
+
+if [[ -z "$WG_TEST_URL" ]]; then
+    echo "WG_TEST_URL is empty. Set WG_TEST_URL explicitly." >&2
+    exit 1
+fi
+
 if [[ -z "$PEER_ID" ]]; then
     PEER_ID="$(podman exec "$WG_CONTAINER" sh -c 'ls -1 /var/lib/wg/peers 2>/dev/null | head -n 1')"
 fi
@@ -32,7 +42,7 @@ if [[ -z "$PEER_ID" ]]; then
     exit 1
 fi
 
-CONF_PATH="/tmp/${PEER_ID}.conf"
+CONF_PATH="/tmp/${PEER_ID}.$$.conf"
 
 cleanup() {
     podman exec "$PEER_CONTAINER" sh -c "wg-quick down '${CONF_PATH}'" >/dev/null 2>&1 || true
