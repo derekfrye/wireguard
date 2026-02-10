@@ -27,14 +27,6 @@ Environment=WG_SUBNET_V6=fd7a:115c:a1e0:ab12::/64
 # set to whatever endpoint you want the peers to use (e.g., your public IP or domain name)
 Environment=WG_ALLOWED_IPS=0.0.0.0/0,::/0
 
-# set to true to enable CoreDNS within the container, otherwise leave off
-# You’d enable CoreDNS in the container when you want the VPN server to provide DNS to peers instead of relying on an external resolver. Typical cases:
-#  - You want a stable, local DNS IP for clients (then also set set WG_PEER_DNS to the container’s DNS IP).
-#  - You need split‑horizon or internal name resolution for services on the VPN.
-#  - You want to centralize DNS filtering/logging inside the VPN.
-#  -  If you already have a reachable DNS server elsewhere, or you don’t want to run DNS in the container, leave it off.
-Environment=WG_ENABLE_COREDNS=false
-
 # persist wg keys and configs across container restarts
 Volume=rust_wg_dev:/var/lib/wg
 # necessary to load WireGuard kernel module from host

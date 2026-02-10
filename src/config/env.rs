@@ -27,9 +27,6 @@ pub(super) fn apply_env_overrides(cfg: &mut ConfigFile) {
     {
         cfg.peers.names = Some(names);
     }
-    if let Some(value) = env_bool("WG_ENABLE_COREDNS") {
-        cfg.runtime.enable_coredns = value;
-    }
     if let Some(value) = env_bool("WG_EMIT_QR") {
         cfg.runtime.emit_qr = value;
     }

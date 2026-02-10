@@ -12,8 +12,7 @@ mod qr;
 mod types;
 
 pub use types::{
-    ConfigFile, NetworkConfig, Paths, PeersConfig, ResolvedConfig, RuntimeConfig,
-    RuntimeConfigFile, ServerConfig,
+    ConfigFile, NetworkConfig, Paths, PeersConfig, ResolvedConfig, RuntimeConfigFile, ServerConfig,
 };
 
 pub fn prepare() -> Result<ResolvedConfig> {
@@ -31,10 +30,6 @@ pub fn prepare() -> Result<ResolvedConfig> {
     assets::ensure_dirs(&paths)?;
 
     let peers = peers::resolve_peers(&cfg.peers, &paths)?;
-    let runtime = RuntimeConfig {
-        enable_coredns: cfg.runtime.enable_coredns,
-    };
-
     let regen_needed =
         inputs::inputs_changed(&cfg, &paths)? || assets::assets_missing(&paths, &peers);
     if regen_needed {
@@ -46,7 +41,6 @@ pub fn prepare() -> Result<ResolvedConfig> {
         server: cfg.server,
         network: cfg.network,
         peers,
-        runtime,
         paths,
     })
 }

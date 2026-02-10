@@ -1,6 +1,5 @@
 mod cli;
 mod config;
-mod dns;
 mod module_check;
 mod netlink_util;
 mod nft;

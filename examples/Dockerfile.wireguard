@@ -17,7 +17,6 @@ FROM fedora:43
 RUN dnf -y update \
     && dnf -y install \
         ca-certificates \
-        coredns \
         iproute \
         iputils \
         kmod \

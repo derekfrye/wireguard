@@ -55,22 +55,15 @@ pub struct PeersConfig {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RuntimeConfigFile {
-    pub enable_coredns: bool,
     pub emit_qr: bool,
 }
 
 impl Default for RuntimeConfigFile {
     fn default() -> Self {
         Self {
-            enable_coredns: true,
             emit_qr: true,
         }
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct RuntimeConfig {
-    pub enable_coredns: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -83,7 +76,6 @@ pub struct ResolvedConfig {
     pub server: ServerConfig,
     pub network: NetworkConfig,
     pub peers: Vec<Peer>,
-    pub runtime: RuntimeConfig,
     pub paths: Paths,
 }
 

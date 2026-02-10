@@ -34,7 +34,6 @@ At a high level, the crate (which you could run outside of a container if you wa
 - Loads `/etc/wg/wg.toml` (or `WG_CONFIG`) and applies env var overrides.
 - Ensures `/var/lib/wg` exists, then generates keys and configs if inputs changed.
 - Brings up `wg0`, configures peers/routes, and applies nftables NAT rules.
-- Optionally starts CoreDNS.
 - Waits for shutdown and tears everything down.
 
 See [design spec](/docs/wg_spec.md) for more.

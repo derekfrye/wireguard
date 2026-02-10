@@ -23,7 +23,6 @@ count = 3
 names = ["laptop", "phone", "tablet"]
 
 [runtime]
-enable_coredns = true
 emit_qr = true
 ```
 
@@ -36,7 +35,6 @@ Supported overrides (all optional):
 - `WG_ALLOWED_IPS` (comma-delimited)
 - `WG_PEER_DNS` (comma-delimited)
 - `WG_PEER_COUNT` or `WG_PEER_NAMES` (comma-delimited)
-- `WG_ENABLE_COREDNS` (true/false)
 - `WG_EMIT_QR` (true/false)
 
 If both `WG_PEER_COUNT` and `WG_PEER_NAMES` are set, `WG_PEER_NAMES` wins.
@@ -107,8 +105,7 @@ No external templates; configs are generated from structured data.
 4) Generate configs if inputs changed.
 5) Configure WG interface + routes (netlink).
 6) Apply nftables NAT rules (IPv4/IPv6 as applicable).
-7) Start CoreDNS if enabled.
-8) Wait for signals and teardown in reverse order.
+7) Wait for signals and teardown in reverse order.
 
 ## 7) Logging and UX
 
