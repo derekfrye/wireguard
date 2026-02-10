@@ -8,7 +8,7 @@ RUN dnf -y update \
     && dnf -y clean all
 
 WORKDIR /build
-COPY rust-wg/ /build/rust-wg/
+COPY . /build/rust-wg/
 WORKDIR /build/rust-wg
 RUN cargo build --release
 

@@ -49,7 +49,7 @@ PublishPort=51820:51820/udp
 # this example created this way, and a dns serving container is at 10.3.0.100
 # `podman network create --driver bridge --subnet=10.3.0.0/16 --ipv6 --subnet fd00::/64 --disable-dns wirehole-squid`
 Network=wirehole-squid:ip=10.3.0.6
-
+DNS=10.3.0.100
 # required for policy routing with WireGuard’s fwmark (avoids rp_filter issues)
 Sysctl=net.ipv4.conf.all.src_valid_mark=1
 # enable forwarding so the container can route peer traffic
