@@ -17,6 +17,12 @@ if [[ -z "$WG_ENDPOINT" ]]; then
     else
         WG_ENDPOINT="${WG_CONTAINER}:${WG_LISTEN_PORT}"
     fi
+    if [[ -z "$WG_ENDPOINT" ]]; then
+        echo "WG_ENDPOINT is not set and could not be auto-detected. Set WG_ENDPOINT explicitly." >&2
+        exit 1
+    else 
+        echo "Auto-detected WG_ENDPOINT: ${WG_ENDPOINT}"
+    fi
 fi
 
 if [[ -z "$WG_TEST_URL" ]]; then
@@ -42,6 +48,10 @@ if [[ -z "$PEER_ID" ]]; then
     exit 1
 fi
 
+escape_sed() {
+    printf '%s' "$1" | sed 's/[|&]/\\&/g'
+}
+
 CONF_PATH="/tmp/${PEER_ID}.$$.conf"
 
 cleanup() {
@@ -50,9 +60,11 @@ cleanup() {
 trap cleanup EXIT
 
 podman exec "$PEER_CONTAINER" sh -c "cp '/var/lib/wg/peers/${PEER_ID}/client.conf' '${CONF_PATH}'"
+EP_ESCAPED="$(escape_sed "$WG_ENDPOINT")"
+ALLOWED_ESCAPED="$(escape_sed "$WG_ALLOWED_IPS")"
 podman exec "$PEER_CONTAINER" sh -c "sed -i \
-    -e 's/^Endpoint.*/Endpoint = ${WG_ENDPOINT}/' \
-    -e 's/^AllowedIPs.*/AllowedIPs = ${WG_ALLOWED_IPS}/' \
+    -e 's|^Endpoint.*|Endpoint = ${EP_ESCAPED}|' \
+    -e 's|^AllowedIPs.*|AllowedIPs = ${ALLOWED_ESCAPED}|' \
     -e '/^DNS[[:space:]]*=.*/d' \
     '${CONF_PATH}'"
 

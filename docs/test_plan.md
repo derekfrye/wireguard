@@ -8,7 +8,7 @@ Note: peer config generation requires `WG_EXTERNAL_ADDRESS` (or `external_addres
 ```sh
 podman build -t localhost/djf/rust-wg -f examples/Dockerfile.wireguard .
 systemctl --user daemon-reload
-systemctl --user start rust-wg-dev.container
+systemctl --user start rust-wg-dev
 ```
 
 
@@ -20,7 +20,7 @@ Build and start a peer test container (joins the same network as the WireGuard c
 podman build -t localhost/djf/rust-wg-test-peer -f examples/Dockerfile.test_peer .
 cp examples/test_peer.container ~/.config/containers/systemd/
 systemctl --user daemon-reload
-systemctl --user start test_peer.container
+systemctl --user start test_peer
 ```
 
 Then run the host-side helper to bring up the WireGuard tunnel inside the peer container and curl a URL that is reachable over the tunnel:
