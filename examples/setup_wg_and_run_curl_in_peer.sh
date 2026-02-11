@@ -52,7 +52,10 @@ escape_sed() {
     printf '%s' "$1" | sed 's/[|&]/\\&/g'
 }
 
-CONF_PATH="/tmp/${PEER_ID}.$$.conf"
+WG_IFNAME="${WG_IFNAME:-wgtest0}"
+# wg-quick requires the filename to be a valid interface name + ".conf".
+# Keep it short and simple to avoid invalid names from PEER_ID.
+CONF_PATH="/tmp/${WG_IFNAME}.conf"
 
 cleanup() {
     podman exec "$PEER_CONTAINER" sh -c "wg-quick down '${CONF_PATH}'" >/dev/null 2>&1 || true
