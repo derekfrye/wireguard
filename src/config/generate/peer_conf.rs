@@ -1,4 +1,4 @@
-use crate::config::io::write_atomic;
+use crate::config::io::{read_to_string, write_atomic};
 use crate::config::qr::{print_qr, write_qr_png};
 use crate::config::types::{ConfigFile, Paths, Peer};
 use anyhow::{Context, Result};
@@ -36,8 +36,11 @@ pub(super) fn generate_peer(
         .external_address
         .as_ref()
         .context("external_address must be set to generate peer configs")?;
+    let psk = read_to_string(peer_dir.join("preshared.key"))
+        .context("reading preshared.key for peer")?;
     text.push_str("[Peer]\n");
     writeln!(text, "PublicKey = {}", server_public.trim())?;
+    writeln!(text, "PresharedKey = {}", psk.trim())?;
     writeln!(text, "Endpoint = {}:{}", external, cfg.server.listen_port)?;
     writeln!(text, "AllowedIPs = {}", cfg.network.allowed_ips.join(", "))?;
 
